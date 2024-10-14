@@ -1,4 +1,4 @@
-from App.model.conexao import ConexaoBD
+from .conexao import ConexaoBD
 
 
 class Area:
