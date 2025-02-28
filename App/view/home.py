@@ -17,6 +17,7 @@ from .editarReserva import EditarReserva
 from .editarSala import EditarSala
 from .reserva import ReservaInterface
 from .telaConfirmacao import TelaConfirmacao
+from .pesquisa import TelaPesquisa
 
 from App.controller.login import pegarUsuarioLogado, removerUsuarioLogado
 
@@ -34,6 +35,9 @@ class HomePrincipal(QMainWindow):
         self._resize_timer.setSingleShot(True)
         self._resize_timer.timeout.connect(self._apply_resize)
         self._resize_geometry = None
+        self.btnMenu.clicked.connect(self.alternarBotoesMenu)
+        self.btnMenu2.clicked.connect(self.alternarBotoesMenu)
+        
 
         # Criando parte interativa do menu
         self.btnMenu: QPushButton
@@ -61,6 +65,7 @@ class HomePrincipal(QMainWindow):
         self.interfEditLogin = EditarLogin
         self.interfEditReserva = EditarReserva
         self.interfEditSala = EditarSala
+        self.interfPesquisa = TelaPesquisa
 
         # Telas dentro do menu para alterar as janelas pelo sub menu
         self.btnPessoa.clicked.connect(lambda: self.trocarTelaMenu(self.cadastros))
@@ -82,11 +87,12 @@ class HomePrincipal(QMainWindow):
         self.btnCurso.clicked.connect(lambda: self.setInterfaceOnHome(self.interfCasCurso))
         self.btnReserva.clicked.connect(lambda: self.setInterfaceOnHome(self.interfReserva))
         self.btnEditarPessoas.clicked.connect(lambda: self.setInterfaceOnHome(self.interfEditPessoa))
-        self.btnEditarReserva.clicked.connect(lambda: self.setInterfaceOnHome(self.interfEditReserva))
+        self.btnEditarReserva.clicked.connect(lambda: self.setInterfaceOnHome(self.interfPesquisa))
         self.btnEditarArea.clicked.connect(lambda: self.setInterfaceOnHome(self.interfEditArea))
         self.btnEditaCurso.clicked.connect(lambda: self.setInterfaceOnHome(self.interfEditCurso))
         self.btnEditarLogin.clicked.connect(lambda: self.setInterfaceOnHome(self.interfEditLogin))
         self.btnEditarSala.clicked.connect(lambda: self.setInterfaceOnHome(self.interfEditSala))
+        # self.btnPesquisarSalas.clicked.connect(lambda: self.setInterfaceOnHome(self.interfPesquisa))
 
         self.btnConfiguracoes.clicked.connect(lambda: self.setInterfaceOnHome(self.interfCongiguracoes))
         self.btnConfig.clicked.connect(lambda: self.setInterfaceOnHome(self.interfCongiguracoes))
@@ -97,7 +103,9 @@ class HomePrincipal(QMainWindow):
         self.btnTelaCheia.clicked.connect(self.windowConnect)
         self.btnFecharPagina.clicked.connect(self.close)
 
-    def setInterfaceOnHome(self, interface: QWidget):
+    ################################
+    # Função correta para inserir interface
+    def setInterfaceOnHome(self, interface:QWidget):
         self.container: QStackedWidget
         if type(interface) != QWidget:  # precisa instanciar a interface
             interface = interface()
@@ -111,15 +119,19 @@ class HomePrincipal(QMainWindow):
         if self.isMaximized():
             self.showNormal()
             self.btnTelaCheia.setStyleSheet("""
-                #btnTelaCheia {
-                    icon: url("App/view/ui/icones/iconTelaCheia.png"); 
-                }""")
+                                           #btnTelaCheia {
+                                               icon: url("App/view/ui/icones/iconTelaCheia.png"); 
+                                            }"""
+                                        )
+            
         else:
             self.showMaximized()
             self.btnTelaCheia.setStyleSheet("""
-                #btnTelaCheia {
-                    icon: url("App/view/ui/icones/iconRestaurarTamanhoTela.png"); 
-                }""")
+                                        #btnTelaCheia {
+                                            icon: url("App/view/ui/icones/iconRestaurarTamanhoTela.png"); 
+                                            }"""
+                                        )
+                
 
     def inserirTelasMenu(self, menu):
         for i in menu:
@@ -191,12 +203,20 @@ class HomePrincipal(QMainWindow):
             new_height = max(200, global_pos.y() - rect.y())
             self.setGeometry(rect.x(), rect.y(), new_width, new_height)
 
+    def alternarBotoesMenu(self):
+        if self.sender() == self.btnMenu:
+            self.btnMenu.setChecked(True)
+            self.btnMenu2.setChecked(False)
+        else:
+            self.btnMenu.setChecked(False)
+            self.btnMenu2.setChecked(True)
+
     @pyqtSlot()
     def on_btnFecharMenuQuebrado_clicked(self):
         self.subMenuQuebrado.hide()
 
     def fazer_logout(self):
-        confirmacao = TelaConfirmacao("Tem certeza que deseja sair?", '', "Sim")
+        confirmacao = TelaConfirmacao("Tem certeza que deseja sair?", '', "Sim", False)
         if confirmacao.exec_():
             removerUsuarioLogado()
             self.close()

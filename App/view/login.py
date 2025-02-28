@@ -80,6 +80,16 @@ class LoginInterface(QDialog):
         # Libera a janela ao soltar o botão do mouse
         if event.button() == Qt.LeftButton:
             self.old_pos = None
+
+
+
+    def keyPressEvent(self, event):
+        # Os dois enter funcionam para fazer o login
+        if event.key() in (Qt.Key_Return, Qt.Key_Enter):  
+            self.on_btnEntrar_clicked()
+        else:
+            super().keyPressEvent(event)
+
  
     def getEmailSenha(self):
         email = self.inputEmail.text().strip()
@@ -94,9 +104,8 @@ class LoginInterface(QDialog):
         texto = 'DADOS INCOMPLETOS.'
         resposta = Feedback(False,
                             texto,
-                            r'ui\icones\iconErro.png',
                             'Aviso!',
-                            'algo teu errado, corrija as falhas e tente novamente')
+                            'algo deu errado, corrija as falhas e tente novamente')
         
         # resposta.mudarFoto("Validado")
         if resposta.exec_():

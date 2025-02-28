@@ -1,12 +1,28 @@
 from PyQt5.QtWidgets import QDialog
 from PyQt5.uic import loadUi
-from PyQt5.QtCore import Qt
+from PyQt5.QtCore import Qt, QPoint
 
 
 class TelaConfirmacao(QDialog):
-    def __init__(self, titulo, aviso, txtBtnOk):
+    def __init__(self, titulo, aviso, txtBtnOk, equipamentos=False):
         super().__init__()
         loadUi('App/view/ui/telaConfirmacao.ui', self)
+        self._is_dragging = False
+        self._start_pos = QPoint()
+        
+        self.checkBoxEquipamentos.setStyleSheet("""
+            QCheckBox::indicator {
+                width: 30px;
+                height: 30px;
+            }
+            QCheckBox::indicator:unchecked {
+                image: url("App/view/ui/icones/toggleOff.png");
+            }
+            QCheckBox::indicator:checked {
+                image: url("App/view/ui/icones/toggleOn.png");
+            }
+        """)
+        
         if aviso == '':
             self.aviso.close()
         else:
@@ -22,6 +38,27 @@ class TelaConfirmacao(QDialog):
         self.setAttribute(Qt.WA_TranslucentBackground)
         
         self.btnOk.setText(txtBtnOk)
+
+        if equipamentos == True:
+            self.containerEquipamentos.show()
+        else:
+            self.containerEquipamentos.hide()
+
+    def mousePressEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self._is_dragging = True
+            self._start_pos = event.globalPos() - self.frameGeometry().topLeft()
+            event.accept()
+
+    def mouseMoveEvent(self, event):
+        if self._is_dragging and event.buttons() == Qt.LeftButton:
+            self.move(event.globalPos() - self._start_pos)
+            event.accept()
+
+    def mouseReleaseEvent(self, event):
+        if event.button() == Qt.LeftButton:
+            self._is_dragging = False
+            event.accept()
         
 if __name__ == "__main__":
     from PyQt5.QtWidgets import QApplication
