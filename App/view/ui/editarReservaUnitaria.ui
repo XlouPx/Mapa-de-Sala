@@ -372,7 +372,7 @@ border-radius: 15px;
      <string>EDITAR RESERVA</string>
     </property>
    </widget>
-   <widget class="QLineEdit" name="lineEdit">
+   <widget class="QLineEdit" name="nomeCurso">
     <property name="enabled">
      <bool>false</bool>
     </property>
@@ -385,7 +385,7 @@ border-radius: 15px;
      </rect>
     </property>
    </widget>
-   <widget class="QPushButton" name="pushButton">
+   <widget class="QPushButton" name="btnSalaLivre">
     <property name="geometry">
      <rect>
       <x>660</x>
